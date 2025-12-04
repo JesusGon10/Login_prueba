@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login 3D con Lluvia</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Fondo oscuro */
+    body {
+        height: 100vh;
+        overflow: hidden;
+        background: #0a0f1f; /* Noche azul */
+    }
+
+    /* Lluvia */
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Tarjeta BLANCA sólida */
+    .login-box {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 360px;
+        padding: 50px 40px;
+        border-radius: 25px;
+
+        background: rgba(255, 255, 255, 1); /* Blanca sólida */
+        backdrop-filter: blur(2px);
+
+        box-shadow:
+            20px 20px 35px rgba(0,0,0,0.25),
+            -20px -20px 35px rgba(255,255,255,0.25);
+
+        text-align: center;
+    }
+
+    .login-box h2 {
+        margin-bottom: 30px;
+        font-size: 28px;
+        color: #333;
+    }
+
+    .input-box {
+        width: 100%;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 18px;
+        border: none;
+
+        background: rgba(255,255,255,0.75);
+        backdrop-filter: blur(5px);
+
+        box-shadow:
+            inset 3px 3px 8px rgba(0,0,0,0.25),
+            inset -3px -3px 8px rgba(255,255,255,0.8);
+
+        font-size: 16px;
+        outline: none;
+    }
+
+    .btn {
+        margin-top: 25px;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 18px;
+
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(5px);
+
+        box-shadow:
+            3px 3px 8px rgba(0,0,0,0.25),
+            -3px -3px 8px rgba(255,255,255,0.8);
+
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.2s;
+    }
+
+    .btn:hover {
+        transform: translateY(-4px);
+    }
+</style>
+</head>
+
+<body>
+
+<canvas id="rain"></canvas>
+
+<div class="login-box">
+    <h2>Login</h2>
+    <input type="text" class="input-box" placeholder="Username">
+    <input type="password" class="input-box" placeholder="Password">
+    <button class="btn">Sign In</button>
+</div>
+
+<script>
+/* ---------------------
+      EFECTO DE LLUVIA
+---------------------- */
+const canvas = document.getElementById("rain");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+let drops = [];
+for (let i = 0; i < 200; i++) {
+    drops.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        length: 10 + Math.random() * 20,
+        speed: 4 + Math.random() * 4
+    });
+}
+
+function drawRain() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "rgba(255,255,255,0.7)";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "round";
+
+    for (let d of drops) {
+        ctx.beginPath();
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x, d.y + d.length);
+        ctx.stroke();
+
+        d.y += d.speed;
+        if (d.y > canvas.height) {
+            d.y = -d.length;
+            d.x = Math.random() * canvas.width;
+        }
+    }
+
+    requestAnimationFrame(drawRain);
+}
+drawRain();
+</script>
+
+</body>
+</html>
